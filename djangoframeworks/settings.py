@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import environs
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+env = environs.Env()
+env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-v+-iv4odhkjpq%n_irt96fku33nc_d_r!hc4i2r=$l0%v9-hj)'
@@ -37,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'app_blog'
 ]
 
 MIDDLEWARE = [
@@ -51,10 +57,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'djangoframeworks.urls'
 
+TEMPLATE_DIR = os.path.join(BASE_DIR,"templates")
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,16 +77,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangoframeworks.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+POSTGRES_USER = env.str("POSTGRES_USER")
+POSTGRES_PASSWORD = env.str("POSTGRES_PASSWORD")
+POSTGRES_HOST = env.str("POSTGRES_HOST")
+POSTGRES_PORT = env.str("POSTGRES_PORT")
+POSTGRES_DB = env.str("POSTGRES_DB")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': POSTGRES_HOST,
+        'PORT': POSTGRES_PORT,
+
     }
 }
+ 
 
 
 # Password validation
